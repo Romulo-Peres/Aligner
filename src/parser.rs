@@ -27,7 +27,7 @@ pub fn parse_message(message: String) -> ParsedMessage {
    }
 }
 
-pub fn parse_program_colors(colors: Vec<String>) -> Result<Vec<Color>, String> {
+pub fn parse_program_colors(colors: &Vec<String>) -> Result<Vec<Color>, String> {
    let mut parsed_colors = Vec::new();
 
    for color in colors {

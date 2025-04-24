@@ -16,7 +16,7 @@ pub struct ProgramArguments {
    #[arg(short = 'c', long = "char-char", value_name = "milliseconds")]
    pub char_by_char_mode: Option<u32>,
 
-   #[arg(short = 's', long = "colors", value_name = "hexadecimal colors")]
+   #[arg(short = 's', long = "colors", value_name = "hexadecimal colors", num_args=1..)]
    pub colors: Option<Vec<String>>,
 
    #[arg(short = 'a', long = "angle", value_name = "0-360")]

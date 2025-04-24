@@ -1,26 +1,26 @@
-use std::{f32::consts::PI, io::Error, ops::AddAssign};
+use std::{f32::consts::PI, io::Error, ops::{AddAssign, SubAssign}};
 
 use crate::state::ProgramState;
 
 pub 
-fn handle_input(input: char, state: &mut ProgramState, keep_rendering: &mut bool, width: u16, height: u16) -> bool {
+fn handle_input(input: char, state: &mut ProgramState, keep_rendering: &mut bool, width: usize, height: usize) -> bool {
    let redraw;
 
    if input == ',' || input == '.' {
       let step = get_adjusted_angle_step(state.angle as f32, 5 as f32, width as f32, height as f32);
 
       if input == '.' {
-         state.angle.add_assign(step as i16);
+         state.angle.add_assign(step);
       }
 
       if input == ',' {
-         state.angle.add_assign(step as i16);
+         state.angle.sub_assign(step);
       }
 
-      if state.angle < 0 {
-         state.angle = 360 + state.angle;
-      } else if state.angle > 360 {
-         state.angle = state.angle % 360;
+      if state.angle < 0.0 {
+         state.angle = 360.0 + state.angle;
+      } else if state.angle > 360.0 {
+         state.angle = state.angle % 360.0;
       }
 
       redraw = true;      

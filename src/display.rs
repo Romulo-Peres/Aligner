@@ -1,10 +1,10 @@
-use std::{io::stdout, ops::AddAssign, thread::sleep, time::Duration};
+use std::{io::{stdout, Error}, ops::AddAssign, thread::sleep, time::Duration};
 
-use crossterm::{style::{ Color, SetForegroundColor }, QueueableCommand};
+use crossterm::{style::{ Color, ResetColor, SetForegroundColor }, ExecutableCommand, QueueableCommand};
 
 use crate::{ color::interpolate_multi_color, parser::ParsedMessage, state::{ProgramMode, ProgramState}, terminal::{move_cursor_right, move_cursor_to, TerminalSize}};
 
-pub fn print_message(message: ParsedMessage, state: &ProgramState, dimensions: TerminalSize, animate_draw: bool, stdout_print: bool) {
+pub fn print_message(message: &ParsedMessage, state: &ProgramState, dimensions: TerminalSize, animate_draw: bool, stdout_print: bool) {
    if stdout_print == false {
       move_cursor_to(0, 0).expect("Failed to set the cursor position. Exiting.");
    }
@@ -49,7 +49,7 @@ fn print_line(line: &Vec<String>, mut color_index: usize, line_number: usize, ma
       color_index.add_assign(1);
    }
 
-   println!("");
+   println!("\r");
 }
 
 fn add_top_padding(dimensions: &TerminalSize, message_lines: usize, stdout_print: bool) {
@@ -77,4 +77,13 @@ fn add_left_padding(dimensions: &TerminalSize, line_length: usize) {
    let message_x_offset = dimensions.width / 2 - line_length as u16 / 2;
 
    move_cursor_right(message_x_offset).expect("Failed to set the cursor position. Exiting.");
+}
+
+pub fn reset_display_colors() -> Result<(), Error>{
+   let mut stdout = stdout();
+
+   match stdout.execute(ResetColor) {
+      Ok(_) => Ok(()),
+      Err(error) => Err(error)
+   }
 }

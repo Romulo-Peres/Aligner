@@ -9,7 +9,7 @@ pub enum AlternateScreenAction {
    Leave
 }
 
-pub enum ChangeBufferingAction {
+pub enum SetStdinRawModeAction {
    Enable,
    Disable
 }
@@ -98,12 +98,12 @@ pub fn alternate_screen(action: AlternateScreenAction) -> Result<(), Error> {
    }
 }
 
-pub fn change_stdin_buffering(action: ChangeBufferingAction) -> Result<(), Error> {
+pub fn set_stdin_raw_mode(action: SetStdinRawModeAction) -> Result<(), Error> {
    match action {
-      ChangeBufferingAction::Enable => {
+      SetStdinRawModeAction::Enable => {
          enable_raw_mode()
       },
-      ChangeBufferingAction::Disable => {
+      SetStdinRawModeAction::Disable => {
         disable_raw_mode()
       }
    }
