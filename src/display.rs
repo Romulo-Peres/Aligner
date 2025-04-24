@@ -4,7 +4,7 @@ use crossterm::{style::{ Color, ResetColor, SetForegroundColor }, ExecutableComm
 
 use crate::{ color::interpolate_multi_color, parser::ParsedMessage, state::{ProgramMode, ProgramState}, terminal::{move_cursor_right, move_cursor_to, TerminalSize}};
 
-pub fn print_message(message: &ParsedMessage, state: &ProgramState, dimensions: TerminalSize, animate_draw: bool, stdout_print: bool) {
+pub fn print_message(message: &ParsedMessage, state: &ProgramState, dimensions: &TerminalSize, animate_draw: bool, stdout_print: bool) {
    if stdout_print == false {
       move_cursor_to(0, 0).expect("Failed to set the cursor position. Exiting.");
    }

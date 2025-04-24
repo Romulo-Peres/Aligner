@@ -6,7 +6,7 @@ use display::{print_message, reset_display_colors};
 use input::{handle_input, read_message_file};
 use parser::parse_message;
 use state::generate_program_state;
-use terminal::{alternate_screen, change_cursor_visibility, get_terminal_size, set_stdin_raw_mode, AlternateScreenAction, CursorVisibilityAction, SetStdinRawModeAction};
+use terminal::{alternate_screen, change_cursor_visibility, clear_terminal, get_terminal_size, set_stdin_raw_mode, AlternateScreenAction, CursorVisibilityAction, SetStdinRawModeAction, TerminalSize};
 
 mod terminal;
 mod arguments;
@@ -18,6 +18,7 @@ mod state;
 
 fn main() {
    let mut keep_rendering: bool = true;
+   let mut dimensions: TerminalSize;
    let arguments = ProgramArguments::parse();
    let read_result = read_message_file(&arguments.message_file);
 
@@ -33,11 +34,16 @@ fn main() {
       exit(1);
    });
 
+   dimensions = get_terminal_size().unwrap_or_else(| _ | {
+      println!("Couldn't get the terminal dimensions. Exiting.");
+      exit(1);
+   });
+
    if arguments.disable_iterative == false {
       enter_iterative_mode();
 
       while keep_rendering {
-         print_message(&parsed_message, &state, get_terminal_size().unwrap(), false, false);
+         print_message(&parsed_message, &state, &dimensions, false, false);
 
          let read_result = event::read();
 
@@ -50,7 +56,18 @@ fn main() {
                } else {
                   keep_rendering = false
                }
+
+            }
+
+            if let event::Event::Resize(columns, rows) = some_event{
+               dimensions.update(columns, rows);
                
+               clear_terminal().unwrap_or_else(| _ | {
+                  leave_iterative_mode();
+                  println!("Couldn't clear the screen after a terminal resize");
+
+                  exit(1);
+               });
             }
 
          }
@@ -62,7 +79,7 @@ fn main() {
    }
 
    if arguments.disable_stdout == false {
-      print_message(&parsed_message, &state, get_terminal_size().unwrap(), false, true);
+      print_message(&parsed_message, &state, &dimensions, false, true);
    }
 
    reset_display_colors().unwrap_or_else(| _ | {

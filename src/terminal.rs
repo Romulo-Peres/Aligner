@@ -24,6 +24,13 @@ pub struct TerminalSize {
    pub height: u16
 }
 
+impl TerminalSize {
+   pub fn update(&mut self, width: u16, height: u16) {
+      self.width = width;
+      self.height = height;
+   }
+}
+
 pub fn move_cursor_right(columns: u16) -> Result<(), Error>{
    let mut stdout = stdout();
 
