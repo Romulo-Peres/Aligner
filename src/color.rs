@@ -19,10 +19,6 @@ pub fn lerp_color(a: Color, b: Color, t: f32) -> Color {
    }
 }
 
-pub fn scale_color(value: u8) -> i16 {
-   ((value as f32 * 1000.0 / 255.0).round()) as i16
-}
-
 pub fn interpolate_multi_color(
    x: f32,
    y: f32,
