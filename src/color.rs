@@ -1,17 +1,17 @@
 use std::f32::consts::PI;
 
 #[derive(Debug, Clone, Copy)]
-struct Color {
-   r: f32,
-   g: f32,
-   b: f32,
+pub struct Color {
+   pub r: f32,
+   pub g: f32,
+   pub b: f32,
 }
 
-fn lerp(a: f32, b: f32, t: f32) -> f32 {
+pub fn lerp(a: f32, b: f32, t: f32) -> f32 {
    a * (1.0 - t) + b * t
 }
 
-fn lerp_color(a: Color, b: Color, t: f32) -> Color {
+pub fn lerp_color(a: Color, b: Color, t: f32) -> Color {
    Color {
       r: lerp(a.r, b.r, t),
       g: lerp(a.g, b.g, t),
@@ -19,11 +19,11 @@ fn lerp_color(a: Color, b: Color, t: f32) -> Color {
    }
 }
 
-fn scale_color(value: u8) -> i16 {
+pub fn scale_color(value: u8) -> i16 {
    ((value as f32 * 1000.0 / 255.0).round()) as i16
 }
 
-fn interpolate_multi_color(
+pub fn interpolate_multi_color(
    x: f32,
    y: f32,
    width: f32,
