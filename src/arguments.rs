@@ -5,10 +5,10 @@ pub struct ProgramArguments {
    pub message_file: String,
 
    #[arg(short = 'v', long = "vertically")]
-   pub vertically: bool,
+   pub align_vertically: bool,
 
    #[arg(short = 'o', long = "horizontally")]
-   pub horizontally: bool,
+   pub align_horizontally: bool,
 
    #[arg(short = 'l', long = "line-line", value_name = "milliseconds")]
    pub line_by_line_mode: Option<u32>,
