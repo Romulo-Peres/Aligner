@@ -1,25 +1,26 @@
-use std::{f32::consts::PI, io::Error, ops::{AddAssign, SubAssign}};
+use std::{f32::consts::PI, io::Error, ops::AddAssign};
 
-use unicode_segmentation::UnicodeSegmentation;
+use crate::state::ProgramState;
 
-pub fn handle_input(input: char, angle: &mut i16, keep_rendering: &mut bool, width: u16, height: u16) -> bool {
+pub 
+fn handle_input(input: char, state: &mut ProgramState, keep_rendering: &mut bool, width: u16, height: u16) -> bool {
    let redraw;
 
    if input == ',' || input == '.' {
-      let step = get_adjusted_angle_step(*angle as f32, 5 as f32, width as f32, height as f32);
+      let step = get_adjusted_angle_step(state.angle as f32, 5 as f32, width as f32, height as f32);
 
       if input == '.' {
-         angle.add_assign(step as i16);
+         state.angle.add_assign(step as i16);
       }
 
       if input == ',' {
-         angle.sub_assign(step as i16);
+         state.angle.add_assign(step as i16);
       }
 
-      if *angle < 0 {
-         *angle = 360 + *angle;
-      } else if *angle > 360 {
-         *angle = *angle % 360;
+      if state.angle < 0 {
+         state.angle = 360 + state.angle;
+      } else if state.angle > 360 {
+         state.angle = state.angle % 360;
       }
 
       redraw = true;      
@@ -31,24 +32,10 @@ pub fn handle_input(input: char, angle: &mut i16, keep_rendering: &mut bool, wid
    return redraw;
 }
 
-pub fn read_message_file(filename: &str) -> Result<Vec<Vec<String>>, Error> {
+pub fn read_message_file(filename: &str) -> Result<String, Error> {
    let read_result = std::fs::read_to_string(filename);
-   let mut file_lines = Vec::new();
 
-   match read_result {
-      Ok(content) => {
-         for line in content.split("\n") {
-            let graphemes: Vec<&str> = line.graphemes(true).collect();
-
-            file_lines.push(graphemes);
-         }
-
-         Ok(file_lines.iter().map(|v| v.iter().map(|s| s.to_string()).collect()).collect())
-      }, 
-      Err(error) => {
-         Err(error)
-      }
-   }
+   return read_result;
 }
 
 pub fn get_adjusted_angle_step(angle_deg: f32, base_step_deg: f32, width: f32, height: f32) -> f32 {
