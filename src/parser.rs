@@ -25,7 +25,7 @@ pub struct ParsedControlMessage {
 struct ControlMessage {
    action: String,
    message: Option<String>,
-   color: Option<String>,
+   colors: Option<String>,
    angle: Option<u16>,
 
 }
@@ -95,7 +95,7 @@ pub fn parse_client_control_message(message: String) -> Result<ParsedControlMess
             }
          },
          "SET_COLORS" => {
-            if let Some(colors) = parsed_message.color {
+            if let Some(colors) = parsed_message.colors {
 
                let return_value = ParsedControlMessage {
                   action: ControlMessageAction::SetColor,
