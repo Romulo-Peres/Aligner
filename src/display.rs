@@ -1,4 +1,4 @@
-use std::{io::{stdout, Error}, ops::AddAssign, thread::sleep, time::Duration};
+use std::{io::{stdout, Error, Write}, ops::AddAssign, thread::sleep, time::Duration};
 
 use crossterm::{style::{ Color, ResetColor, SetForegroundColor }, ExecutableCommand, QueueableCommand};
 
@@ -25,6 +25,10 @@ pub fn print_message(message: &ParsedMessage, state: &ProgramState, dimensions: 
       };
 
       print_line(line.1, color_index, line.0, message.max_line_size, message.lines.len(), state, animate_draw);
+
+      if state.mode == ProgramMode::LineByLine && animate_draw == true {
+         sleep(Duration::from_millis(state.animation_delay));
+      }
    }
 
    if state.align_vertically == true && stdout_print == true {
@@ -47,6 +51,8 @@ fn print_line(line: &Vec<String>, mut color_index: usize, line_number: usize, ma
       }
 
       color_index.add_assign(1);
+
+      stdout.flush().unwrap_or(());
    }
 
    println!("\r");
@@ -74,7 +80,7 @@ fn add_bottom_padding(dimensions: &TerminalSize, line_count: usize) {
 }
 
 fn add_left_padding(dimensions: &TerminalSize, line_length: usize) {
-   let message_x_offset = dimensions.width / 2 - line_length as u16 / 2;
+   let message_x_offset = (dimensions.width / 2).checked_sub(line_length as u16 / 2).unwrap_or(0);
 
    move_cursor_right(message_x_offset).expect("Failed to set the cursor position. Exiting.");
 }
