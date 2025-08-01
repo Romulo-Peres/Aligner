@@ -1,5 +1,3 @@
-use std::process::exit;
-
 use serde::Deserialize;
 use unicode_segmentation::UnicodeSegmentation;
 

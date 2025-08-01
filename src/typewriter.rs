@@ -1,11 +1,8 @@
-use std::process::exit;
-
-use clap::builder::Str;
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::parser::ParsedMessage;
 
-const FONT_HEIGHT: u8 = 6;
+const FONT_HEIGHT: usize = 6;
 
 #[derive(Default)]
 struct ExtractedPunctuation {
@@ -42,25 +39,34 @@ fn create_display_message(mut text: String, graphemes: ExtractedGraphemes) -> Pa
    let mut max_line_size = 0;
 
    text = text.to_uppercase();
+   
+   let split_text: Vec<&str> = text.split("\n").collect();
+   
+   for line in &split_text {
+      let line = line.to_string();
+      let line_characters: Vec<char> = line.chars().collect();
 
-   let line_characters: Vec<char> = text.chars().collect();
-
-   for i in 0..FONT_HEIGHT {
-      let mut line: Vec<String> = Vec::new();
-
-      for j in 0..text.len() {
-         let c = line_characters[j];
-
-         if let Some(grapheme_lines) = get_grapheme_lines(c, &graphemes) {
-            line.extend(grapheme_lines[i as usize].clone());
+      for i in 0..FONT_HEIGHT {
+         let mut line: Vec<String> = Vec::new();
+   
+         for j in 0..line_characters.len() {
+            let c = line_characters[j];
+   
+            if let Some(grapheme_lines) = get_grapheme_lines(c, &graphemes) {
+               line.extend(grapheme_lines[i as usize].clone());
+            }
          }
+   
+         if line.len() > max_line_size {
+            max_line_size = line.len();
+         }
+   
+         message.push(line);
       }
 
-      if line.len() > max_line_size {
-         max_line_size = line.len();
+      if split_text.len() > 1 {
+         message.push(Vec::from([" ".to_string()]));
       }
-
-      message.push(line);
    }
 
    ParsedMessage { max_line_size, lines: message }
@@ -108,7 +114,7 @@ fn generate_whitespace_graphemes() -> Vec<Vec<String>> {
    let mut whitespace: Vec<Vec<String>> = Vec::new();
    let whitespace_graphemes: Vec<String> = "    ".graphemes(true).map(|x| x.to_string()).collect();
 
-   for i in 0..FONT_HEIGHT {
+   for _ in 0..FONT_HEIGHT {
       whitespace.push(whitespace_graphemes.clone());
    }
 
@@ -142,7 +148,7 @@ fn extract_font_graphemes(font: &str) -> ExtractedGraphemes {
    }
 
    for i in 0..=11 {
-      let lines = font_lines[i*6+36*6..i*6+36*6+6].to_vec();
+      let lines = font_lines[(36 * FONT_HEIGHT) + (i * FONT_HEIGHT)..(36 * FONT_HEIGHT) + (i * FONT_HEIGHT) + FONT_HEIGHT].to_vec();
 
       match i {
          0 => extract_punctuation(lines, &mut punctuation.exclamation),
