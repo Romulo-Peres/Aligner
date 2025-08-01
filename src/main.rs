@@ -9,6 +9,8 @@ use parser::{parse_client_control_message, parse_message};
 use state::generate_program_state;
 use terminal::{alternate_screen, change_cursor_visibility, clear_terminal, get_terminal_size, set_stdin_raw_mode, AlternateScreenAction, CursorVisibilityAction, SetStdinRawModeAction, TerminalSize};
 
+use crate::{parser::ParsedMessage, typewriter::generate_message};
+
 mod terminal;
 mod arguments;
 mod color;
@@ -17,20 +19,30 @@ mod display;
 mod parser;
 mod state;
 mod network;
+mod typewriter;
 
 fn main() {
    let mut keep_rendering: bool = true;
    let mut dimensions: TerminalSize;
    let mut animate_draw = true;
    let arguments = ProgramArguments::parse();
-   let read_result = read_message_file(&arguments.message_file);
+   let mut parsed_message: ParsedMessage;
 
-   let message = read_result.unwrap_or_else(| error |  {
-      println!("Error while trying to read the message file: {}", error);
+   if let Some(message_file) = &arguments.message_file  {
+      let read_result = read_message_file(&message_file);
+
+      let message = read_result.unwrap_or_else(| error |  {
+         println!("Error while trying to read the message file: {}", error);
+         exit(1);
+      });    
+
+      parsed_message = parse_message(message);
+   } else if let Some(ref display_text) = arguments.display_text {
+      parsed_message =  generate_message(display_text.clone());
+   } else {
+      println!("You need to pass a text or a file to the program.");
       exit(1);
-   });
-
-   let mut parsed_message = parse_message(message);
+   }
 
    let mut state = generate_program_state(&arguments).unwrap_or_else(| error | {
       println!("{}", error);

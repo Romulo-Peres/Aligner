@@ -2,7 +2,11 @@ use clap::Parser;
 
 #[derive(Parser, Debug)]
 pub struct ProgramArguments {
-   pub message_file: String,
+   #[arg(short = 'f', long = "file")]
+   pub message_file: Option<String>,
+
+   #[arg(short = 'e', long = "text")]
+   pub display_text: Option<String>,
 
    #[arg(short = 'v', long = "vertically")]
    pub align_vertically: bool,
