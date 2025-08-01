@@ -35,13 +35,13 @@
 	<li>An application that runs on modern terminals.</li>
 	<li>A program that fully operates on standard output.</li>
 	<li>Single-threaded software.</li>
-	<li>A program that displays UTF-8 messages on the terminal.</li>
+	<li>A program that displays UTF-8 messages in the terminal.</li>
 </ul>
 
 ## What Aligner is not ❌
 <ul>
 	<li>A program that displays images on the terminal.</li>
-	<li>A program that shows the exact same color palette on different terminals.</li>
+	<li>A program that displays the exact same color palette across different terminals.</li>
 </ul>
 
 
@@ -72,20 +72,28 @@ cargo build --release
 After that, the executable file `aligner` will be generated in the `target/release` directory.
 
 ## Base functionalities 🪛
-Aligner's primary trait is its ability to align messages, so to make the program work, you must provide it with a message file containing ASCII or UTF-8 characters. This file can be passed as a positional argument, just use the absolute or relative path to the file, like so:
+Aligner's primary trait is its ability to align messages, so to make the program work, you must provide it with a message file containing UTF-8 content or a string fully made by ASCII characters. 
+
+### Using a message file
 ```sh
-./aligner message.txt
+./aligner --file message.txt
 
 # or
 
-./aligner /home/user/.messages/message.txt
+./aligner --file /home/user/.messages/message.txt
 ```
-Note: press any key to exit the program
+Note: Press any key to exit the program
+
+### Using a simple ASCII string
+```sh
+./aligner --text "Hello, World!"
+```
+Note: This message display uses a built-in font scheme that supports the characters a-z, A-Z, 0-9, and a few punctuation marks.
 
 ### Aligning the message
 The Aligner provides two ways to align messages: horizontally and vertically. These can be triggered using the `--vertically` and `--horizontally` optional flags. So to make the message be diplayed in the middle of screen, this program call should do the trick:
 ```sh
-./aligner message.txt --vertically --horizontally
+./aligner --text "Hello" --vertically --horizontally
 ```
 
 ## Render modes 🎞️ 
@@ -105,9 +113,14 @@ Char-by-char mode also takes a delay in milliseconds as an argument, and each gr
 Char-by-char mode is enabled with the `--char-char x` flag, where `x`specifies the delay in milliseconds.
 
 ## Message colors 🖍️
-By default, the Aligner prints your message in white. However, it also allows you to specify a different color, or even a gradient. To do so, use the `--colors "[colors]"` flag, where `[colors]` is a list of hexadecimal color codes.
+By default, the Aligner prints your message in white. However, it also allows you to specify a different color, or even a gradient. To do so, use the `--colors [colors]` flag, where `[colors]` is a list of hexadecimal color codes, each color enclosed by quotes.
 
 If only one color is provided, your message will be displayed in that solid color. If two or more colors are given, a gradient will be applied using the specified colors.
+
+Example:
+```sh
+./aligner --text "Hello, World!"  --colors "#FF0000" "#0000FF"
+```
 
 ## Gradient angle 📐
 If two or more colors are provided, you can specify the angle of the generated gradient in degrees. To do so, use the `--angle x` flag, where `x` is a value between 0 and 360.
@@ -174,6 +187,11 @@ All communication between the server and client happens over the TCP protocol. O
 #### Rotate the gradient to the right
 ```txt
 { "action": "ROTATE_RIGHT" }
+```
+
+#### Define text
+```txt
+{ "action": "SET_TEXT", "message": "Hello, world!" }
 ```
 
 ### Pro tips
