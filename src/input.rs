@@ -1,6 +1,6 @@
 use std::{f32::consts::PI, io::Error, ops::{AddAssign, SubAssign}, process::exit};
 
-use crate::{leave_iterative_mode, parser::{parse_message, parse_program_colors, ControlMessageAction, ParsedControlMessage, ParsedMessage}, state::ProgramState, terminal::clear_terminal};
+use crate::{leave_iterative_mode, parser::{parse_message, parse_program_colors, ControlMessageAction, ParsedControlMessage, ParsedMessage}, state::ProgramState, terminal::clear_terminal, typewriter::generate_message};
 
 pub 
 fn handle_input(input: char, state: &mut ProgramState, keep_rendering: &mut bool, width: usize, height: usize) -> bool {
@@ -78,6 +78,9 @@ pub fn handle_network_input(input: ParsedControlMessage, state: &mut ProgramStat
       },
       ControlMessageAction::RotateRight => {
          handle_network_rotation(state, false, message);
+      },
+      ControlMessageAction::SetText => {
+         handle_network_set_text(input.value, message);
       }
    }
 
@@ -126,4 +129,15 @@ fn handle_network_set_message(incoming_message: String, program_message: &mut Pa
    });
 
    *program_message = parse_message(incoming_message);
+}
+
+fn handle_network_set_text(incoming_text: String, program_message: &mut ParsedMessage) {
+   clear_terminal().unwrap_or_else(|_| {
+      leave_iterative_mode();
+      println!("Failed to clear the screen after the message was updated.");
+
+      exit(1);
+   });
+
+   *program_message = generate_message(incoming_text);
 }

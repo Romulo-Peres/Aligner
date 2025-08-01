@@ -1,3 +1,5 @@
+use std::process::exit;
+
 use serde::Deserialize;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -8,7 +10,8 @@ pub enum ControlMessageAction {
    RotateRight,
    SetMessage,
    SetColor,
-   SetAngle
+   SetAngle,
+   SetText
 }
 
 pub struct ParsedMessage {
@@ -131,6 +134,18 @@ pub fn parse_client_control_message(message: String) -> Result<ParsedControlMess
             };
 
             return Ok(return_value);
+         },
+         "SET_TEXT" => {
+            if let Some(message) = parsed_message.message {
+
+               let return_value = ParsedControlMessage {
+                  action: ControlMessageAction::SetText,
+                  value: message
+               };
+
+               return Ok(return_value);
+            }
+
          }
          _ => {
             return Err("The sent message is not a valid JSON for this application.".to_string())
