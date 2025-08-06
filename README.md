@@ -72,7 +72,7 @@ cargo build --release
 After that, the executable file `aligner` will be generated in the `target/release` directory.
 
 ## Base functionalities 🪛
-Aligner's primary trait is its ability to align messages, so to make the program work, you must provide it with a message file containing UTF-8 content or a string fully made by ASCII characters. 
+Aligner's primary trait is its ability to align messages, so to make the program work, you must provide it with a message file containing UTF-8 content or a string fully made of ASCII characters. 
 
 ### Using a message file
 ```sh
